@@ -1,0 +1,190 @@
+---
+import { Icon } from 'astro-icon/components';
+import PageHeader from '~/components/ui/PageHeader.astro';
+import Timeline from '~/components/ui/Timeline.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import { REVOLUT_PATH_TEXT, STATEMENT_CHOICES } from '~/data/statement';
+import { REPO_URL } from '~/navigation';
+import { downloadUrl, formatDate, formatSize, releaseAtBuild, type Platform } from '~/utils/release';
+
+const latest = await releaseAtBuild();
+const [format, range] = STATEMENT_CHOICES.map(({ value }) => value);
+
+const cards: Array<{ platform: Platform; icon: string; title: string; detail: string; badge?: string }> = [
+  { platform: 'windows', icon: 'tabler:brand-windows', title: 'Windows', detail: 'Windows 10 and 11 · installer' },
+  {
+    platform: 'mac-arm',
+    icon: 'tabler:brand-apple',
+    title: 'Mac with Apple Silicon',
+    detail: 'M1 and newer · macOS 14.4 or newer',
+    badge: 'Experimental',
+  },
+  {
+    platform: 'mac-intel',
+    icon: 'tabler:brand-apple',
+    title: 'Mac with Intel',
+    detail: 'macOS 14.4 or newer',
+    badge: 'Experimental',
+  },
+  { platform: 'linux', icon: 'tabler:brand-ubuntu', title: 'Linux', detail: 'x64 · .tar.gz archive' },
+];
+
+const windowsSteps = [
+  {
+    description:
+      'Open the file you downloaded, ending in <code class="kbd">-windows-x64-setup.exe</code>. It is usually in your <b class="text-default">Downloads</b> folder.',
+  },
+  {
+    description:
+      'Windows may show a blue box saying <b class="text-default">“Windows protected your PC”</b>. Click <b class="text-default">More info</b>, then <b class="text-default">Run anyway</b>.' +
+      `<span class="mt-2 block text-sm">This happens because the app is not signed with a paid certificate, not because anything was found in it. It only appears for the installer, and applies to this one file only: please don’t turn off Windows security. If you’re worried, the app’s code is publicly available on <a class="underline underline-offset-4 hover:text-primary" href="${REPO_URL}">GitHub</a>.</span>`,
+  },
+  {
+    description:
+      'Follow the installer. It installs only for you and does not ask for an administrator password, then start <b class="text-default">Statement Portfolio Tracker</b> from the Start menu or the desktop.',
+  },
+];
+
+const macSteps = [
+  {
+    description:
+      'Open the <code class="kbd">.dmg</code> file and drag the app into <b class="text-default">Applications</b>.',
+  },
+  {
+    description:
+      'Open it. The first time, macOS says it can’t be opened. Open <b class="text-default">System Settings › Privacy &amp; Security</b>, scroll down and click <b class="text-default">Open Anyway</b> next to the app’s name.' +
+      `<span class="mt-2 block text-sm">This happens because the app is not signed by Apple, not because anything was found in it. It applies to this one app only: please don’t turn off your Mac’s security. If you’re worried, the app’s code is publicly available on <a class="underline underline-offset-4 hover:text-primary" href="${REPO_URL}">GitHub</a>.</span>`,
+  },
+];
+
+/** Install steps have no titles, so their text needs no gap above it. */
+const stepClasses = { container: 'mt-6', description: 'mt-0' };
+
+const metadata = {
+  title: 'Download Statement Portfolio Tracker',
+  description: 'Download the free Statement Portfolio Tracker app for Windows, macOS or Linux.',
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="relative overflow-hidden">
+    <div class="mx-auto max-w-5xl px-4 md:px-6 pt-14 md:pt-20">
+      <PageHeader title="Download" align="center" glow>
+        Version <span data-release-version>{latest?.version ?? 'latest'}</span>{
+          latest && (
+            <span set:html={`, released <span data-release-date>${formatDate(latest.publishedAt, 'en-GB')}</span>`} />
+          )
+        }. Free, with no account. Your system is highlighted.
+        <p
+          slot="after"
+          class="os-show os-mobile mx-auto mt-4 max-w-xl rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-default"
+        >
+          This is a desktop app. Open this page on your Windows computer or Mac to download it.
+        </p>
+      </PageHeader>
+    </div>
+
+    <div class="mx-auto max-w-5xl px-4 md:px-6 pt-10 grid gap-4 sm:grid-cols-2">
+      {
+        cards.map(({ platform, icon, title, detail, badge }) => {
+          const download = latest?.downloads[platform];
+          return (
+            <a
+              href={downloadUrl(latest, platform)}
+              data-asset={platform}
+              data-card={platform}
+              class="card group flex items-center gap-5 p-6 transition hover:border-primary/60"
+            >
+              <Icon name={icon} class="w-10 h-10 shrink-0 text-gray-900 dark:text-white" />
+              <span class="min-w-0 flex-1 text-left">
+                <span class="flex flex-wrap items-center gap-2">
+                  <span class="text-lg font-semibold text-gray-900 dark:text-white">{title}</span>
+                  {badge && (
+                    <span class="rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
+                      {badge}
+                    </span>
+                  )}
+                  <span class="yours hidden rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+                    Your system
+                  </span>
+                </span>
+                <span class="mt-1 block text-sm text-muted">
+                  {detail}
+                  {' · '}
+                  <span data-asset-size={platform}>{download ? formatSize(download.size) : 'size on GitHub'}</span>
+                </span>
+              </span>
+              <Icon
+                name="tabler:download"
+                class="w-6 h-6 shrink-0 text-muted transition group-hover:text-primary group-hover:translate-y-0.5"
+              />
+            </a>
+          );
+        })
+      }
+    </div>
+    <p class="mx-auto max-w-5xl px-4 md:px-6 mt-4 text-sm text-muted">
+      Not sure which Mac you have? Open the Apple menu › <b class="text-default">About This Mac</b>. If it says
+      <b class="text-default">Chip: Apple M…</b>, choose Apple Silicon; if it says <b class="text-default"
+        >Processor: Intel</b
+      >, choose Intel.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-4 md:px-6 pt-20 md:pt-28 space-y-16">
+    <div id="windows" class="scroll-mt-24">
+      <h2 class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <Icon name="tabler:brand-windows" class="w-7 h-7" /> Installing on Windows
+      </h2>
+      <Timeline items={windowsSteps} numbered animate={false} classes={stepClasses} />
+      <p class="mt-6 text-sm text-muted">
+        To update, install the new version over the old one: your settings are kept. To remove the app, use
+        <b class="text-default">Settings › Apps › Installed apps</b>. Your spreadsheets are never deleted. If your
+        computer uses Smart App Control, it may block apps that are not signed, and there is no way around that for now.
+      </p>
+    </div>
+
+    <div id="mac" class="scroll-mt-24">
+      <h2 class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <Icon name="tabler:brand-apple" class="w-7 h-7" /> Installing on a Mac
+      </h2>
+      <p class="mt-4 flex gap-2 rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-default">
+        <Icon name="tabler:alert-triangle" class="mt-0.5 w-4 h-4 shrink-0 text-amber-500" />
+        <span>
+          The Mac version is built automatically and has not yet been tried on a real Mac. If something doesn’t work,
+          please <a class="underline underline-offset-4" href={`${REPO_URL}/issues`}>tell us</a>.
+        </span>
+      </p>
+      <Timeline items={macSteps} numbered animate={false} classes={stepClasses} />
+    </div>
+
+    <div id="linux" class="scroll-mt-24">
+      <h2 class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+        <Icon name="tabler:brand-ubuntu" class="w-7 h-7" /> Linux
+      </h2>
+      <p class="mt-4 text-muted">
+        Unpack the archive and run <code class="kbd">StatementPortfolioTracker</code> inside it. If the window doesn’t open
+        on Debian or Ubuntu, <code class="kbd">sudo apt install libxcb-cursor0</code> usually fixes it.
+      </p>
+    </div>
+
+    <div class="card p-6 md:p-8">
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">Next: get your statement</h2>
+      <p class="mt-2 text-muted">
+        In the Revolut app: <b class="text-default">{REVOLUT_PATH_TEXT}</b>, format <b class="text-default">{format}</b
+        >, date range <b class="text-default">{range}</b>. Then open it in the app.
+      </p>
+      <a href="/guide" class="mt-5 inline-flex items-center gap-1.5 font-medium text-primary hover:underline">
+        Read the guide <Icon name="tabler:arrow-right" class="w-4 h-4" />
+      </a>
+    </div>
+
+    <p class="text-sm text-muted">
+      Older versions and the source code are on <a
+        class="underline underline-offset-4 hover:text-primary"
+        href={`${REPO_URL}/releases`}>GitHub</a
+      >. The app doesn’t update itself; come back here for new versions.
+    </p>
+  </section>
+  <div class="pb-24 md:pb-32"></div>
+</Layout>

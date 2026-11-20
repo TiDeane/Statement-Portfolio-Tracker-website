@@ -1,0 +1,38 @@
+---
+/**
+ * The title at the top of a page other than the landing page, with a line under it (the default
+ * slot) and, optionally, a blue glow behind it. Anything that should follow the line, such as a
+ * notice, goes in the `after` slot.
+ */
+import { twMerge } from 'tailwind-merge';
+
+export interface Props {
+  title: string;
+  align?: 'start' | 'center';
+  glow?: boolean;
+  class?: string;
+}
+
+const { title, align = 'start', glow = false, class: className = '' } = Astro.props;
+const centered = align === 'center';
+---
+
+<header class={twMerge('relative', centered ? 'text-center' : 'max-w-3xl', className)}>
+  {
+    glow && (
+      <div
+        class="pointer-events-none absolute left-1/2 -top-40 -z-[1] h-[30rem] w-[60rem] -translate-x-1/2 rounded-full bg-primary/20 blur-[120px]"
+        aria-hidden="true"
+      />
+    )
+  }
+  <h1 class="text-4xl md:text-6xl font-bold tracking-tighter text-gray-900 dark:text-white">{title}</h1>
+  {
+    Astro.slots.has('default') && (
+      <p class:list={['mt-4 text-lg text-muted', centered && 'mx-auto max-w-xl']}>
+        <slot />
+      </p>
+    )
+  }
+  <slot name="after" />
+</header>
