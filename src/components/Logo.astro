@@ -6,7 +6,9 @@ import icon from '~/assets/images/app-icon.png';
 
 <span class="inline-flex items-center gap-2.5">
   <Image src={icon} alt="" width={32} height={32} class="w-8 h-8 rounded-lg" loading="eager" />
-  <span class="self-center text-lg md:text-base lg:text-lg font-bold text-gray-900 whitespace-nowrap dark:text-white">
+  <span
+    class="self-center text-sm min-[380px]:text-base sm:text-lg font-bold text-gray-900 whitespace-nowrap dark:text-white"
+  >
     {SITE?.name}
   </span>
 </span>

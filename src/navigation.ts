@@ -5,8 +5,8 @@ export const headerData = {
   links: [
     { text: 'How it works', href: '/#how-it-works' },
     { text: 'Features', href: '/#features' },
-    { text: 'Guide', href: '/guide' },
     { text: 'FAQ', href: '/#faq' },
+    { text: 'Guide', href: '/guide' },
   ],
-  actions: [{ text: 'Download', href: '/download', variant: 'primary' as const }],
+  actions: [{ text: 'Download', href: '/download', variant: 'primary' as const, icon: 'tabler:download' }],
 };
