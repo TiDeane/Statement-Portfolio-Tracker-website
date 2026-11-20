@@ -1,0 +1,252 @@
+---
+import PageHeader from '~/components/ui/PageHeader.astro';
+import Layout from '~/layouts/PageLayout.astro';
+import { REVOLUT_PATH_TEXT, STATEMENT_CHOICES, STATEMENT_TRANSFER_TIP } from '~/data/statement';
+import { ISSUES_URL } from '~/navigation';
+
+const [format, range] = STATEMENT_CHOICES.map(({ value }) => value);
+
+const sections = [
+  { id: 'statement', title: 'Get your statement' },
+  { id: 'use', title: 'Use the app' },
+  { id: 'confirm', title: 'Confirming an investment' },
+  { id: 'result', title: 'Read the result' },
+  { id: 'missing-price', title: 'When a price is missing' },
+  { id: 'spreadsheet', title: 'Your Excel spreadsheet' },
+  { id: 'google-sheets', title: 'Using Google Sheets' },
+  { id: 'settings', title: 'Settings' },
+  { id: 'privacy', title: 'Privacy' },
+  { id: 'limitations', title: 'Known limitations' },
+  { id: 'problem', title: 'Report a problem' },
+];
+
+const metadata = {
+  title: 'Guide · Statement Portfolio Tracker',
+  description:
+    'How to get your Revolut statement, use the app, read the result and keep your Excel spreadsheet up to date.',
+};
+---
+
+<Layout metadata={metadata}>
+  <div class="mx-auto max-w-7xl px-4 md:px-6 pt-14 md:pt-20 pb-24 md:pb-32">
+    <PageHeader title="Guide">More details on how the app works.</PageHeader>
+
+    <div class="mt-12 lg:grid lg:grid-cols-[14rem_1fr] lg:gap-16">
+      <nav aria-label="On this page" class="hidden lg:block">
+        <ul class="sticky top-24 space-y-1 text-sm border-l border-gray-200 dark:border-white/10">
+          {
+            sections.map(({ id, title }) => (
+              <li>
+                <a
+                  href={`#${id}`}
+                  data-toc={id}
+                  class="-ml-px block border-l border-transparent pl-4 py-1 text-muted hover:text-default hover:border-gray-400 data-[active]:text-primary data-[active]:border-primary"
+                >
+                  {title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <article
+        class="prose prose-lg dark:prose-invert max-w-3xl prose-headings:tracking-tight prose-headings:scroll-mt-24 prose-a:text-primary prose-table:text-base prose-th:text-left"
+      >
+        <h2 id="statement">Get your statement</h2>
+        <p>In the Revolut app:</p>
+        <ol>
+          <li>Tap <b>{REVOLUT_PATH_TEXT}</b>.</li>
+          <li>Choose <b>{format}</b> as the format and <b>{range}</b> as the date range.</li>
+          <li>{STATEMENT_TRANSFER_TIP}</li>
+        </ol>
+        <blockquote>
+          <p>
+            <b>Always choose All time.</b> The app needs your whole history, from your first trade until today, to know what
+            you still hold. A shorter range lists only the buys and sells inside it, so the results would be wrong or the
+            file would be rejected as incomplete.
+          </p>
+        </blockquote>
+
+        <h2 id="use">Use the app</h2>
+        <ol>
+          <li>
+            <b>Step 1: your Revolut statement.</b> Drag the file onto the window, or click <b>Choose statement file…</b>
+          </li>
+          <li>
+            <b>Step 2 (optional): your Excel spreadsheet.</b> Choose <b>Don’t use a spreadsheet</b> to only see the results
+            in the app, or <b>Update my Excel spreadsheet</b>, then pick your file or let the app create one. It
+            remembers your choice.
+          </li>
+          <li>
+            <b>Step 3.</b> Click the green button. The app looks up prices, which takes a few seconds, then shows your investments.
+          </li>
+        </ol>
+
+        <h2 id="confirm">Confirming an investment</h2>
+        <p>
+          Many funds are traded on several stock exchanges under the same code. When the app can’t tell which one is
+          yours, it shows a short list; they are usually the same fund at almost the same price. You can:
+        </p>
+        <ul>
+          <li><b>Pick one:</b> the one whose name and currency match what you see in Revolut.</li>
+          <li>
+            <b>Always choose the first option:</b> the app uses the first listing now and whenever it can’t tell, which is
+            usually right, since the listing whose past prices best match what you paid comes first.
+          </li>
+          <li><b>Skip this investment:</b> it is left without a current value.</li>
+        </ul>
+        <p>The app remembers your answer. To change it later, use <a href="#settings">Settings</a>.</p>
+
+        <h2 id="result">Read the result</h2>
+        <table>
+          <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>Investment</td><td>The fund or share, as its code and name.</td></tr>
+            <tr><td>Invested</td><td>What you paid for what you still hold, fees included.</td></tr>
+            <tr><td>% of invested</td><td>How much of all the money you invested went into this one.</td></tr>
+            <tr><td>Worth now</td><td>What it would be worth at the latest price. Approximate.</td></tr>
+            <tr><td>% of worth now</td><td>Its share of all your investments, by what they are worth now.</td></tr>
+            <tr><td>Gain or loss</td><td>Worth now minus invested.</td></tr>
+          </tbody>
+        </table>
+        <p>
+          The last row is the total. Investments you have sold completely are not listed. To rename an investment,
+          double-click its name (or select it and press <kbd>F2</kbd>); the name is also used in your spreadsheet.
+        </p>
+
+        <h2 id="missing-price">When a price is missing</h2>
+        <ul>
+          <li>
+            <b>“unavailable”</b>: the app could not get a current price. The row is grey and left out of the total, and
+            the app never guesses a value for it.
+          </li>
+          <li>
+            <b>A value marked *</b>: Yahoo Finance could not be reached, so the last price found on an earlier day is
+            used. Point at it to see the date.
+          </li>
+          <li><b>A value marked (your value)</b>: one you entered yourself.</li>
+        </ul>
+        <p>
+          A line under the table then offers <b>Try again</b>, which looks the prices up again, and <b
+            >Enter its value…</b
+          >, where you type what the whole investment is worth now, as the Revolut app shows it. You can also type it
+          over “unavailable” in your spreadsheet. The app keeps your value until Yahoo Finance has a price again.
+        </p>
+
+        <h2 id="spreadsheet">Your Excel spreadsheet</h2>
+        <p>
+          Each time you press the green button, the app writes two sheets of your file, creating them the first time.
+          Close the file in Excel first: the app can’t save a file that Excel has open.
+        </p>
+        <ul>
+          <li>
+            <b>Current Holdings</b>: one row per investment you hold, and a Total. Percentages and the Total are Excel
+            formulas, so they follow if you change a value. The whole sheet is rewritten each time, so keep your notes
+            elsewhere.
+          </li>
+          <li>
+            <b>Portfolio History</b>: one row per day you use the app (a second run on the same day updates that row),
+            with what you put in, what it is worth, unrealized and realized gains, ROI %, net worth, net deposits and
+            gain vs deposits.
+          </li>
+        </ul>
+        <p>
+          <b>Your own sheets:</b> values, formulas, formatting, colour rules, tables and charts are kept, and can read from
+          the app’s sheets. <b>Pictures, shapes and text boxes are lost</b>, because the app saves the whole file again;
+          if your file has any, create a new spreadsheet instead.
+        </p>
+        <p>
+          <b>Backups:</b> the first time each day the app changes an existing file, it saves a copy next to it, named with
+          the date, for example <code>My investments_backup_2026-10-15.xlsx</code>. Three are kept by default; you can
+          change that in Settings. To go back, open a copy and save it under your spreadsheet’s name.
+        </p>
+
+        <h2 id="google-sheets">Using Google Sheets</h2>
+        <ol>
+          <li>
+            Install <a href="https://www.google.com/drive/download/">Google Drive for desktop</a> and sign in. Your Drive
+            appears on your computer like a folder.
+          </li>
+          <li>In step 2, create the spreadsheet inside your Drive, or choose an Excel file already there.</li>
+          <li>
+            Open it from drive.google.com. Google Sheets edits it as an Excel file (it shows a small .XLSX label).
+          </li>
+        </ol>
+        <p>
+          After each update, reload the page to see the new values. Close the file in Google Sheets before pressing the
+          green button. <b>File › Save as Google Sheets</b> makes a separate copy, which the app does not update.
+        </p>
+
+        <h2 id="settings">Settings</h2>
+        <p>Settings lists the investments the app remembers. Select one to:</p>
+        <ul>
+          <li><b>Rename</b> it, for the table and the spreadsheet.</li>
+          <li>
+            <b>Choose the listing next time</b>: the next run shows you the list of listings for it again.
+          </li>
+          <li><b>Forget</b> it: the next run looks for its listing again, as on the first day.</li>
+        </ul>
+        <p>
+          You can also set how many backup copies to keep (0 to 99), and undo changes to investments with
+          <kbd>Ctrl</kbd>+<kbd>Z</kbd>.
+        </p>
+
+        <h2 id="privacy">Privacy</h2>
+        <p>
+          Everything happens on your computer. There are no accounts, and the app doesn’t record how you use it. The
+          only thing that leaves your computer is the codes of your investments and dates, sent to Yahoo Finance to look
+          up prices. Your statement and your amounts are never sent anywhere, and none of the amounts in your statement
+          are kept by the app.
+        </p>
+        <p>
+          The app keeps a few kilobytes of settings (your confirmed investments, where your spreadsheet is, last prices
+          found and values you entered) in your user folder. Uninstalling it on Windows deletes them.
+        </p>
+
+        <h2 id="limitations">Known limitations</h2>
+        <ul>
+          <li>Only Revolut’s stock statement in CSV format, with the “All time” range, is supported.</li>
+          <li>The statement must be in a single currency.</li>
+          <li>
+            Only cash top-ups, market buys, market sells and dividends are understood. Anything else (a stock split, a
+            withdrawal) stops the app with a message naming the row, so it never shows numbers built on a guess.
+          </li>
+          <li>Prices need an internet connection.</li>
+          <li>The figures are simple: what you paid against what it is worth now. No tax calculations.</li>
+          <li>
+            English only. The app doesn’t update itself: new versions are on the <a href="/download">download page</a>.
+          </li>
+        </ul>
+
+        <h2 id="problem">Report a problem</h2>
+        <p>
+          Open an issue on <a href={ISSUES_URL}>GitHub</a>. If the app showed an error box, click <b>Copy details</b> there
+          and paste the text into the issue. <b>Don’t attach your real statement</b>: it contains your trades and
+          amounts. Describe the problem and the row the message mentions instead.
+        </p>
+      </article>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  // Highlight the section being read in the contents.
+  const links = new Map(
+    Array.from(document.querySelectorAll<HTMLElement>('[data-toc]')).map((a) => [a.dataset.toc!, a])
+  );
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((a) => a.removeAttribute('data-active'));
+        links.get(entry.target.id)?.setAttribute('data-active', '');
+      });
+    },
+    { rootMargin: '0px 0px -70% 0px' }
+  );
+  links.forEach((_, id) => {
+    const heading = document.getElementById(id);
+    if (heading) observer.observe(heading);
+  });
+</script>
