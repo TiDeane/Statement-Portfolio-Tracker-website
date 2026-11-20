@@ -1,0 +1,33 @@
+---
+import { SITE } from 'astrowind:config';
+import { getCanonical } from '~/utils/permalinks';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = SITE.name,
+  description = 'See how your Revolut investments are doing and keep your Excel spreadsheet up to date. A free app that runs on your computer.',
+} = Astro.props;
+const canonical = String(getCanonical(Astro.url.pathname));
+const image = new URL('/favicon.png', SITE.site).toString();
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" type="image/png" href="/favicon.png" />
+<link rel="apple-touch-icon" href="/favicon.png" />
+<meta name="theme-color" content="#030610" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={image} />
+<meta name="twitter:card" content="summary" />

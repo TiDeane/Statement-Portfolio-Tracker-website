@@ -1,0 +1,8 @@
+site:
+  name: Statement Portfolio Tracker
+  site: 'https://statements.tiagodeane.com'
+  base: '/'
+  trailingSlash: false
+
+ui:
+  theme: 'dark' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"
