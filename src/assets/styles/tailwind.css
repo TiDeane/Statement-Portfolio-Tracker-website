@@ -91,6 +91,34 @@
   margin-top: 0;
 }
 
+/* Download buttons for one system are shown only on that system (download.ts sets data-os). Without
+   JavaScript, or on a phone or an unknown system, the generic button shows instead. */
+.os-show {
+  display: none !important;
+}
+html[data-os='windows'] .os-show.os-windows,
+html[data-os='mac'] .os-show.os-mac,
+html[data-os='linux'] .os-show.os-linux,
+html[data-os='mobile'] .os-show.os-mobile {
+  display: inline-flex !important;
+}
+html[data-os='windows'] .os-default,
+html[data-os='mac'] .os-default,
+html[data-os='linux'] .os-default {
+  display: none !important;
+}
+/* The download page highlights the visitor's own system. */
+html[data-os='windows'] [data-card='windows'],
+html[data-os='mac'] [data-card='mac-arm'],
+html[data-os='linux'] [data-card='linux'] {
+  @apply ring-2 ring-primary;
+}
+html[data-os='windows'] [data-card='windows'] .yours,
+html[data-os='mac'] [data-card='mac-arm'] .yours,
+html[data-os='linux'] [data-card='linux'] .yours {
+  display: inline-flex;
+}
+
 @layer components {
   .card {
     @apply relative overflow-hidden rounded-3xl border border-gray-200 bg-white/70 dark:border-white/10 dark:bg-white/[0.03];

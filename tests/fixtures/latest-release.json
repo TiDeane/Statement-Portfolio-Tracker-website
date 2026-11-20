@@ -1,0 +1,27 @@
+{
+  "tag_name": "v1.2.0",
+  "published_at": "2026-10-20T16:47:14Z",
+  "html_url": "https://github.com/TiDeane/Statement-Portfolio-Tracker/releases/tag/v1.2.0",
+  "assets": [
+    {
+      "name": "StatementPortfolioTracker-1.2.0-linux-x64.tar.gz",
+      "browser_download_url": "https://github.com/TiDeane/Statement-Portfolio-Tracker/releases/download/v1.2.0/StatementPortfolioTracker-1.2.0-linux-x64.tar.gz",
+      "size": 72748539
+    },
+    {
+      "name": "StatementPortfolioTracker-1.2.0-macos-apple-silicon.dmg",
+      "browser_download_url": "https://github.com/TiDeane/Statement-Portfolio-Tracker/releases/download/v1.2.0/StatementPortfolioTracker-1.2.0-macos-apple-silicon.dmg",
+      "size": 28966810
+    },
+    {
+      "name": "StatementPortfolioTracker-1.2.0-macos-intel.dmg",
+      "browser_download_url": "https://github.com/TiDeane/Statement-Portfolio-Tracker/releases/download/v1.2.0/StatementPortfolioTracker-1.2.0-macos-intel.dmg",
+      "size": 31614601
+    },
+    {
+      "name": "StatementPortfolioTracker-1.2.0-windows-x64-setup.exe",
+      "browser_download_url": "https://github.com/TiDeane/Statement-Portfolio-Tracker/releases/download/v1.2.0/StatementPortfolioTracker-1.2.0-windows-x64-setup.exe",
+      "size": 22290999
+    }
+  ]
+}
