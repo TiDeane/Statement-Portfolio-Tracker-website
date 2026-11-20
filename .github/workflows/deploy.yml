@@ -1,0 +1,75 @@
+name: deploy
+
+# Only main is built: other branches and pull requests are not.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # Rebuild once a month, so the download links baked into the pages catch up with new app releases
+  # even without a push here. Visitors rarely need it: the pages ask GitHub for the newest release
+  # when they load. To pick up a release at once, run this workflow by hand.
+  schedule:
+    - cron: '17 6 1 * *' # on the 1st of each month at 06:17 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  # Check, test and build, then keep the build for the deploy job. A manual run started on another
+  # branch does nothing.
+  build:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 1
+
+  # Only with the build that was just checked.
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # needed for OIDC
+      contents: read
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Upload to S3
+        env:
+          B: s3://${{ vars.S3_BUCKET }}
+          CC_LONG: public,max-age=31536000,immutable
+        run: |
+          # Hashed files first, so new pages never point to files that aren't uploaded yet.
+          aws s3 sync dist/_astro "$B/_astro" --cache-control "$CC_LONG"
+          # Then the pages and the rest, which browsers revalidate every time.
+          aws s3 sync dist "$B" --delete --exclude "_astro/*" --cache-control "no-cache"
+
+      - name: Clear CloudFront cache
+        run: aws cloudfront create-invalidation --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" --paths "/*"
