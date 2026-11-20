@@ -1,0 +1,68 @@
+---
+import { Icon } from 'astro-icon/components';
+import Headline from '~/components/ui/Headline.astro';
+import { REPO_URL } from '~/navigation';
+import { REVOLUT_PATH_TEXT, STATEMENT_CHOICES, STATEMENT_TRANSFER_TIP } from '~/data/statement';
+
+const [format, range] = STATEMENT_CHOICES.map(({ value }) => value);
+
+/** Answers may contain simple HTML (links, bold). */
+const questions = [
+  {
+    q: 'Is this made by Revolut?',
+    a: 'No. It is an independent, unofficial app that reads the statement file Revolut lets you export. It is not affiliated with or endorsed by Revolut, and it is not financial advice.',
+  },
+  {
+    q: 'Is it free?',
+    a: 'Yes, completely. There is no paid version, no account and no advertising. The source code is public under the GPL-3.0 licence.',
+  },
+  {
+    q: 'Windows says “Windows protected your PC”. Is it safe?',
+    a: `Windows shows this for apps that are not signed with a paid certificate, not because anything was found in it. If you’re worried, the app’s code is publicly available on <a href="${REPO_URL}">GitHub</a>. Click <b>More info</b>, then <b>Run anyway</b>. It only asks once, for the installer. Please don’t turn off Windows security to install it. <a href="/download#windows">Step-by-step help</a>.`,
+  },
+  {
+    q: 'My Mac says the app can’t be opened.',
+    a: `macOS refuses apps that are not signed by Apple the first time. If you’re worried, the app’s code is publicly available on <a href="${REPO_URL}">GitHub</a>. Open <b>System Settings › Privacy &amp; Security</b>, scroll down and click <b>Open Anyway</b> next to the app’s name. This allows this one app only. The Mac version is still experimental. <a href="/download#mac">Step-by-step help</a>.`,
+  },
+  {
+    q: 'Where do I get the statement file?',
+    a: `In the Revolut app: <b>${REVOLUT_PATH_TEXT}</b>. Choose <b>${format}</b> and <b>${range}</b>. ${STATEMENT_TRANSFER_TIP} Always choose ${range}: the app needs your whole history to know what you still hold.`,
+  },
+  {
+    q: 'Is my data sent anywhere?',
+    a: 'Only the codes of the funds you hold, and dates, go to Yahoo Finance to look up prices. Your statement, your amounts and your spreadsheet never leave your computer, and the app records nothing about how you use it.',
+  },
+  {
+    q: 'Will it change my other sheets?',
+    a: 'No. It writes only its own two sheets, <b>Current Holdings</b> and <b>Portfolio History</b>, and keeps your values, formulas, formatting, tables and charts. Because it saves the whole file again, pictures, shapes and text boxes in it are lost; if your file has any, let the app create a new spreadsheet instead. A backup copy is saved before the first change each day.',
+  },
+  {
+    q: 'Does it work with Google Sheets?',
+    a: 'Yes, through Google Drive for desktop: keep the Excel file in your Drive folder and open it from drive.google.com. Google Sheets edits it as an Excel file. <a href="/guide#google-sheets">How to set it up</a>.',
+  },
+  {
+    q: 'What does it not do?',
+    a: 'It reads only Revolut’s stock statement, in one currency. It shows simple figures (what you paid against what it is worth now), with no tax calculations. It is in English only and does not update itself: new versions are on this site. <a href="/guide#limitations">All known limitations</a>.',
+  },
+];
+---
+
+<section id="faq" class="mx-auto max-w-3xl px-4 md:px-6 pt-24 md:pt-36 scroll-mt-[72px]">
+  <Headline tagline="Questions" title="Good to know" />
+  <div class="divide-y divide-gray-200 dark:divide-white/10 border-y border-gray-200 dark:border-white/10">
+    {
+      questions.map(({ q, a }) => (
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6 text-left text-lg font-semibold text-gray-900 dark:text-white">
+            {q}
+            <Icon name="tabler:plus" class="faq-icon w-5 h-5 shrink-0 text-muted transition-transform duration-200" />
+          </summary>
+          <p
+            class="mt-3 text-muted leading-relaxed [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_b]:text-default [&_b]:font-semibold"
+            set:html={a}
+          />
+        </details>
+      ))
+    }
+  </div>
+</section>

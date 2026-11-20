@@ -1,0 +1,112 @@
+---
+import { Icon } from 'astro-icon/components';
+import BentoCard from '~/components/ui/BentoCard.astro';
+import Headline from '~/components/ui/Headline.astro';
+import { shot } from '~/utils/screenshots';
+
+const today = new Date();
+const day = (offset: number) => {
+  const d = new Date(today);
+  d.setDate(d.getDate() - offset);
+  return d.toISOString().slice(0, 10);
+};
+---
+
+<section id="features" class="mx-auto max-w-7xl px-4 md:px-6 pt-24 md:pt-36 scroll-mt-[72px]">
+  <Headline
+    tagline="What you get"
+    title="Made for keeping a spreadsheet up to date"
+    subtitle="Most people only want their Excel file refreshed. The app does that in one click."
+  />
+
+  <div class="grid gap-4 md:gap-6 md:grid-cols-6">
+    <BentoCard
+      class="md:col-span-4"
+      title="A history, one row per day"
+      text="Portfolio History gets a row each day you use the app: what you put in, what it is worth, your gains and your return. Follow it over months, or chart it."
+      image={shot('sheet-history')}
+      alt="The Portfolio History sheet in Excel"
+    />
+
+    <BentoCard
+      class="md:col-span-2"
+      title="Private by design"
+      text="Everything happens on your computer. No account, and nothing about how you use it is recorded."
+    >
+      <div class="space-y-3 text-sm">
+        <div class="rounded-xl bg-gray-100 dark:bg-white/5 p-4">
+          <p class="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
+            <Icon name="tabler:arrow-up-right" class="w-4 h-4 text-primary" /> Sent to Yahoo Finance
+          </p>
+          <p class="mt-1 text-muted">The codes of your funds, to look up their prices.</p>
+        </div>
+        <div class="rounded-xl bg-gray-100 dark:bg-white/5 p-4">
+          <p class="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
+            <Icon name="tabler:lock" class="w-4 h-4 text-green-500" /> Never leaves your computer
+          </p>
+          <p class="mt-1 text-muted">Your statement, your amounts, your spreadsheet.</p>
+        </div>
+      </div>
+    </BentoCard>
+
+    <BentoCard
+      class="md:col-span-3"
+      title="Pick the right fund once"
+      text="Many funds trade on several exchanges under the same code. When the app can’t tell which one is yours, it asks once and remembers."
+      image={shot('confirm')}
+      alt="The app asking which listing of a fund is yours"
+    />
+
+    <BentoCard
+      class="md:col-span-3"
+      title="A price missing? Type in the value"
+      text="If Yahoo Finance has no price for a fund today, the app says so instead of guessing, and lets you enter what Revolut shows. It is marked as yours and kept until a price is found."
+      image={shot('entered-value')}
+      alt="An investment whose value was entered by hand, marked “your value”"
+    />
+
+    <BentoCard
+      class="md:col-span-2"
+      title="A backup before every change"
+      text="The first time each day it changes your spreadsheet, the app saves a copy next to it. You choose how many to keep."
+    >
+      <ul class="space-y-2 text-sm font-mono">
+        <li
+          class="flex items-center gap-2 rounded-lg bg-gray-100 dark:bg-white/5 px-3 py-2 text-gray-900 dark:text-white"
+        >
+          <Icon name="tabler:file-spreadsheet" class="w-4 h-4 shrink-0 text-green-600" />
+          <span class="truncate">My investments.xlsx</span>
+        </li>
+        {
+          [0, 1, 2].map((offset) => (
+            <li class="flex items-center gap-2 rounded-lg px-3 py-2 text-muted">
+              <Icon name="tabler:file-spreadsheet" class="w-4 h-4 shrink-0" />
+              <span class="truncate">My investments_backup_{day(offset)}.xlsx</span>
+            </li>
+          ))
+        }
+      </ul>
+    </BentoCard>
+
+    <BentoCard
+      class="md:col-span-4"
+      title="Your own sheets stay yours"
+      text="The app writes only its two sheets, Current Holdings and Portfolio History. Everything else in your file is left as it was, and your own formulas and charts can use the app’s figures."
+    >
+      <div class="grid sm:grid-cols-2 gap-3 text-sm">
+        <div class="rounded-xl bg-gray-100 dark:bg-white/5 p-4">
+          <p class="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
+            <Icon name="tabler:circle-check" class="w-4 h-4 text-green-500" /> Kept
+          </p>
+          <p class="mt-1 text-muted">Values, formulas, formatting, colour rules, tables and charts.</p>
+        </div>
+        <div class="rounded-xl bg-gray-100 dark:bg-white/5 p-4">
+          <p class="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
+            <Icon name="tabler:info-circle" class="w-4 h-4 text-amber-500" /> Not kept
+          </p>
+          <p class="mt-1 text-muted">Pictures, shapes and text boxes. If you use them, let the app make a new file.</p>
+        </div>
+      </div>
+    </BentoCard>
+  </div>
+</section>

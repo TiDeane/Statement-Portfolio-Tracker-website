@@ -1,0 +1,42 @@
+---
+/** A screenshot in the page's theme: the dark picture in dark mode, the light one otherwise. */
+import { Image } from 'astro:assets';
+import type { Shot } from '~/utils/screenshots';
+
+export interface Props {
+  shot: Shot;
+  alt: string;
+  sizes: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+
+const { shot, alt, sizes, class: className = '', loading = 'lazy' } = Astro.props;
+const same = shot.dark === shot.light;
+const widths = (width: number) => [640, 960, 1440, Math.min(width, 2000)].filter((w) => w <= width);
+---
+
+{
+  shot.light && (
+    <Image
+      src={shot.light}
+      alt={alt}
+      widths={widths(shot.light.width)}
+      sizes={sizes}
+      loading={loading}
+      class:list={['block w-full h-auto', { 'dark:hidden': !same }, className]}
+    />
+  )
+}
+{
+  shot.dark && !same && (
+    <Image
+      src={shot.dark}
+      alt={alt}
+      widths={widths(shot.dark.width)}
+      sizes={sizes}
+      loading={loading}
+      class:list={['hidden dark:block w-full h-auto', className]}
+    />
+  )
+}

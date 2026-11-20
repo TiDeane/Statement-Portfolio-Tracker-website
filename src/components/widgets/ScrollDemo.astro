@@ -1,0 +1,200 @@
+---
+/**
+ * "How it works": the steps on the left; on wide screens one picture on the right stays in place and
+ * changes to the step nearest the middle of the screen. A line through the step numbers fills in as
+ * the visitor goes, and clicking a step scrolls to it. On narrow screens each step shows its own
+ * picture under its text. No scroll-jacking: the page scrolls normally.
+ */
+import AppWindow from '~/components/ui/AppWindow.astro';
+import Headline from '~/components/ui/Headline.astro';
+import RevolutPath from '~/components/ui/RevolutPath.astro';
+import { shot } from '~/utils/screenshots';
+
+const steps = [
+  {
+    title: 'Export your statement from Revolut',
+    text: 'In the Revolut app, ask for your brokerage account statement as a CSV file covering all time. It lists every top-up, buy, sale and dividend since you started.',
+    visual: 'revolut',
+  },
+  {
+    title: 'Drop it into the app',
+    text: 'Drag the file onto the window, or choose it. If you want your figures in Excel, pick your spreadsheet, or let the app create one. It remembers both for next time.',
+    visual: 'steps',
+    alt: 'The app’s three steps, with a statement and a spreadsheet chosen',
+  },
+  {
+    title: 'Press the green button',
+    text: 'The app looks up today’s prices and shows, for each investment, what you put in, what it is worth now and your gain or loss. Your spreadsheet is updated in the same moment.',
+    visual: 'sheet-holdings',
+    windowTitle: 'My investments.xlsx',
+    alt: 'The Current Holdings sheet the app writes in Excel: each investment, what was invested, its value now and the total',
+  },
+];
+---
+
+<section id="how-it-works" class="relative scroll-mt-[72px]">
+  <div class="mx-auto max-w-7xl px-4 md:px-6 pt-24 md:pt-36">
+    <Headline
+      tagline="How it works"
+      title="Three steps. About a minute."
+      subtitle="No terminal, no settings to fill in."
+    />
+
+    <div class="grid lg:grid-cols-[5fr_7fr] gap-10 lg:gap-16" data-demo>
+      <div class="relative">
+        <span
+          class="absolute left-5 hidden w-0.5 -translate-x-1/2 rounded-full bg-gray-200 dark:bg-white/10 lg:block"
+          data-demo-rail
+          aria-hidden="true"
+        >
+          <span
+            class="absolute inset-x-0 top-0 h-0 rounded-full bg-primary transition-[height] duration-500 motion-reduce:transition-none"
+            data-demo-fill></span>
+        </span>
+        <ol class="space-y-16 lg:space-y-0">
+          {
+            steps.map((step, i) => (
+              <li
+                class="group lg:min-h-[50vh] lg:grid lg:grid-cols-[2.5rem_1fr] lg:content-center lg:items-start lg:gap-x-6 lg:cursor-pointer transition-opacity duration-500 lg:opacity-40 lg:hover:opacity-70 data-[active]:opacity-100 lg:data-[active]:hover:opacity-100"
+                data-demo-step={i}
+                {...(i === 0 ? { 'data-active': '', 'data-reached': '' } : {})}
+              >
+                <span
+                  class="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-white font-bold transition-colors duration-500 lg:bg-gray-200 lg:text-gray-500 lg:dark:bg-gray-800 lg:dark:text-gray-400 lg:group-data-[reached]:bg-primary lg:group-data-[reached]:text-white"
+                  data-demo-dot
+                >
+                  {i + 1}
+                </span>
+                <div>
+                  <h3 class="mt-5 lg:mt-0 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    <button
+                      type="button"
+                      class="text-left rounded-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+                      data-demo-go={i}
+                    >
+                      {step.title}
+                    </button>
+                  </h3>
+                  <p class="mt-3 text-lg text-muted max-w-md">{step.text}</p>
+                  <div class="mt-8 lg:hidden">
+                    {step.visual === 'revolut' ? (
+                      <RevolutPath />
+                    ) : (
+                      <AppWindow shot={shot(step.visual)} alt={step.alt ?? ''} title={step.windowTitle} />
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="hidden lg:block">
+        <div class="sticky top-[calc(50vh-18rem)] h-[36rem]">
+          <div class="absolute -inset-8 rounded-[2rem] bg-primary/15 blur-3xl" aria-hidden="true"></div>
+          {
+            steps.map((step, i) => (
+              <div
+                class="absolute inset-0 flex items-center transition-all duration-500 motion-reduce:transition-none opacity-0 translate-y-4 data-[active]:opacity-100 data-[active]:translate-y-0"
+                data-demo-frame={i}
+                aria-hidden={i === 0 ? undefined : 'true'}
+                {...(i === 0 ? { 'data-active': '' } : {})}
+              >
+                {step.visual === 'revolut' ? (
+                  <RevolutPath />
+                ) : (
+                  <AppWindow shot={shot(step.visual)} alt={step.alt ?? ''} title={step.windowTitle} class="w-full" />
+                )}
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const demo = document.querySelector<HTMLElement>('[data-demo]');
+  if (demo) {
+    const steps = Array.from(demo.querySelectorAll<HTMLElement>('[data-demo-step]'));
+    const frames = Array.from(demo.querySelectorAll<HTMLElement>('[data-demo-frame]'));
+    const dots = Array.from(demo.querySelectorAll<HTMLElement>('[data-demo-dot]'));
+    const rail = demo.querySelector<HTMLElement>('[data-demo-rail]');
+    const fill = demo.querySelector<HTMLElement>('[data-demo-fill]');
+    const wide = window.matchMedia('(min-width: 1024px)');
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let current = 0;
+
+    // The fill runs from the first number to the current one.
+    const drawFill = () => {
+      if (!fill || !dots.length) return;
+      const centre = (dot: HTMLElement) => dot.offsetTop + dot.offsetHeight / 2;
+      fill.style.height = `${centre(dots[current]) - centre(dots[0])}px`;
+    };
+
+    const show = (index: number) => {
+      current = index;
+      steps.forEach((step, i) => {
+        step.toggleAttribute('data-active', i === index);
+        step.toggleAttribute('data-reached', i <= index);
+      });
+      frames.forEach((frame, i) => {
+        frame.toggleAttribute('data-active', i === index);
+        frame.setAttribute('aria-hidden', String(i !== index));
+      });
+      drawFill();
+    };
+
+    // The rail runs from the first number's centre to the last one's.
+    const drawRail = () => {
+      if (!rail || !dots.length) return;
+      const centre = (dot: HTMLElement) => dot.offsetTop + dot.offsetHeight / 2;
+      rail.style.top = `${centre(dots[0])}px`;
+      rail.style.height = `${centre(dots[dots.length - 1]) - centre(dots[0])}px`;
+      drawFill();
+    };
+
+    // The current step is the one whose middle is nearest the middle of the screen.
+    let pending = false;
+    const pick = () => {
+      pending = false;
+      const middle = window.innerHeight / 2;
+      let best = 0;
+      let bestDistance = Infinity;
+      steps.forEach((step, i) => {
+        const box = step.getBoundingClientRect();
+        const distance = Math.abs(box.top + box.height / 2 - middle);
+        if (distance < bestDistance) [best, bestDistance] = [i, distance];
+      });
+      if (best !== current) show(best);
+    };
+    const onScroll = () => {
+      if (!pending) {
+        pending = true;
+        requestAnimationFrame(pick);
+      }
+    };
+
+    const go = (index: number) => {
+      steps[index].scrollIntoView({ block: 'center', behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+      show(index);
+    };
+
+    steps.forEach((step, i) => {
+      // On wide screens the whole step is a target; the title button covers keyboards and narrow screens.
+      step.addEventListener('click', (event) => {
+        if (wide.matches || (event.target as HTMLElement).closest('[data-demo-go]')) go(i);
+      });
+    });
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      drawRail();
+      onScroll();
+    });
+    drawRail();
+    pick();
+  }
+</script>

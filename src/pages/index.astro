@@ -1,0 +1,22 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import TrustStrip from '~/components/widgets/TrustStrip.astro';
+import ScrollDemo from '~/components/widgets/ScrollDemo.astro';
+import Bento from '~/components/widgets/Bento.astro';
+import Faq from '~/components/widgets/Faq.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Statement Portfolio Tracker: your Revolut investments, at a glance',
+};
+---
+
+<Layout metadata={metadata}>
+  <Hero />
+  <TrustStrip />
+  <ScrollDemo />
+  <Bento />
+  <Faq />
+  <CallToAction />
+</Layout>

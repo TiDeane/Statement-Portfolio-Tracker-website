@@ -1,0 +1,37 @@
+---
+import ThemedImage from '~/components/ui/ThemedImage.astro';
+import type { Shot } from '~/utils/screenshots';
+import { twMerge } from 'tailwind-merge';
+
+export interface Props {
+  title: string;
+  text: string;
+  image?: Shot;
+  alt?: string;
+  class?: string;
+}
+
+const { title, text, image, alt = '', class: className = '' } = Astro.props;
+const hasImage = !!(image?.dark || image?.light);
+const hasVisual = hasImage || Astro.slots.has('default');
+---
+
+<article class={twMerge('card flex flex-col', className)}>
+  <div class="p-6 md:p-8">
+    <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h3>
+    <p class="mt-2 text-muted leading-relaxed">{text}</p>
+  </div>
+  {
+    hasVisual && (
+      <div class="flex flex-1 flex-col justify-center px-6 pb-6 md:px-8 md:pb-8">
+        {hasImage ? (
+          <div class="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 shadow-xl">
+            <ThemedImage shot={image!} alt={alt} sizes="(min-width: 768px) 60vw, 100vw" />
+          </div>
+        ) : (
+          <slot />
+        )}
+      </div>
+    )
+  }
+</article>

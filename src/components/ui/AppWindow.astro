@@ -1,0 +1,70 @@
+---
+/**
+ * A screenshot of the app in a Windows 11-like window frame. Without an image it shows a labelled
+ * placeholder of the same shape.
+ */
+import ThemedImage from '~/components/ui/ThemedImage.astro';
+import type { Shot } from '~/utils/screenshots';
+import { twMerge } from 'tailwind-merge';
+import icon from '~/assets/images/app-icon.png';
+
+export interface Props {
+  shot: Shot;
+  alt: string;
+  title?: string;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+  chrome?: boolean;
+}
+
+const {
+  shot,
+  alt,
+  title = 'Statement Portfolio Tracker',
+  class: className = '',
+  loading = 'lazy',
+  chrome = true,
+} = Astro.props;
+---
+
+<figure
+  class={twMerge(
+    'overflow-hidden rounded-xl border border-gray-300/80 bg-white shadow-2xl shadow-black/20 dark:border-white/10 dark:bg-[#202020] dark:shadow-black/60',
+    className
+  )}
+>
+  {
+    chrome && (
+      <div class="flex items-center gap-2 h-9 pl-3 border-b border-gray-200 dark:border-white/5 bg-[#f3f3f3] dark:bg-[#2b2b2b] select-none">
+        <img src={icon.src} alt="" class="w-4 h-4" width="16" height="16" />
+        <span class="text-xs text-gray-700 dark:text-gray-300 truncate">{title}</span>
+        <span class="ml-auto flex h-full text-gray-500 dark:text-gray-400" aria-hidden="true">
+          <span class="w-11 grid place-items-center">
+            <svg width="10" height="10" viewBox="0 0 10 10">
+              <path d="M0 5h10" stroke="currentColor" />
+            </svg>
+          </span>
+          <span class="w-11 grid place-items-center">
+            <svg width="10" height="10" viewBox="0 0 10 10">
+              <rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor" />
+            </svg>
+          </span>
+          <span class="w-11 grid place-items-center">
+            <svg width="10" height="10" viewBox="0 0 10 10">
+              <path d="M0 0l10 10M10 0L0 10" stroke="currentColor" />
+            </svg>
+          </span>
+        </span>
+      </div>
+    )
+  }
+  {
+    shot.dark || shot.light ? (
+      <ThemedImage shot={shot} alt={alt} loading={loading} sizes="(min-width: 1024px) 60vw, 100vw" />
+    ) : (
+      <div class="aspect-[16/10] grid place-items-center bg-gray-50 dark:bg-white/[0.02] text-sm text-muted p-6 text-center">
+        Screenshot: {alt}
+      </div>
+    )
+  }
+</figure>

@@ -1,0 +1,81 @@
+---
+import { Icon } from 'astro-icon/components';
+import AppWindow from '~/components/ui/AppWindow.astro';
+import DownloadButton from '~/components/ui/DownloadButton.astro';
+import { formatDate, releaseAtBuild } from '~/utils/release';
+import { shot } from '~/utils/screenshots';
+
+const latest = await releaseAtBuild();
+---
+
+<section class="relative overflow-hidden" id="top">
+  <!-- Soft light behind the headline and the screenshot -->
+  <div class="pointer-events-none absolute inset-0 -z-[1]" aria-hidden="true">
+    <div
+      class="absolute left-1/2 top-[-10%] h-[42rem] w-[70rem] -translate-x-1/2 rounded-full bg-primary/20 blur-[120px] dark:bg-primary/25"
+    >
+    </div>
+    <div
+      class="absolute left-[60%] top-[45%] h-[30rem] w-[40rem] -translate-x-1/2 rounded-full bg-accent/10 blur-[120px] dark:bg-accent/20"
+    >
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-7xl px-4 md:px-6 pt-14 md:pt-24 text-center">
+    <a
+      href="/download"
+      class="motion-safe:animate-fade inline-flex items-center gap-2 rounded-full border border-gray-300 dark:border-white/15 bg-white/60 dark:bg-white/5 px-3.5 py-1.5 text-sm text-muted hover:text-default transition backdrop-blur"
+    >
+      <span class="h-2 w-2 rounded-full bg-green-500"></span>
+      Free app for Revolut stock statements
+      <Icon name="tabler:arrow-right" class="w-4 h-4" />
+    </a>
+
+    <h1
+      class="motion-safe:animate-fade mt-6 font-heading font-bold tracking-tighter leading-[1.05] text-gray-900 dark:text-white text-5xl sm:text-6xl lg:text-7xl"
+    >
+      Your Revolut investments,&#32;<br class="hidden sm:block" />
+      <span class="text-gradient">at a glance.</span>
+    </h1>
+
+    <p class="motion-safe:animate-fade mx-auto mt-6 max-w-2xl text-lg md:text-xl text-muted">
+      Open the statement you export from Revolut and see what each investment is worth today. If you like, your own
+      Excel spreadsheet is kept up to date too. All on your computer.
+    </p>
+
+    <div class="motion-safe:animate-fade mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
+      <DownloadButton />
+      <a href="#how-it-works" class="btn-secondary text-lg px-7 py-4">See how it works</a>
+    </div>
+
+    <p class="os-show os-mobile motion-safe:animate-fade mt-5 text-sm text-default">
+      A desktop app for Windows and Mac.
+    </p>
+    <p class="motion-safe:animate-fade mt-3 text-sm text-muted">
+      Version <span data-release-version>{latest?.version ?? 'latest'}</span>
+      {
+        latest && (
+          <>
+            {' · '}
+            <span data-release-date>{formatDate(latest.publishedAt, 'en-GB')}</span>
+          </>
+        )
+      }
+      · Free · <a href="/download" class="underline underline-offset-4 hover:text-primary">Other systems</a>
+    </p>
+
+    <div class="relative mx-auto mt-14 md:mt-20 max-w-5xl motion-safe:animate-fade">
+      <div
+        class="absolute -inset-x-10 -inset-y-6 rounded-[2rem] bg-primary/20 blur-3xl dark:bg-primary/30"
+        aria-hidden="true"
+      >
+      </div>
+      <AppWindow
+        shot={shot('result')}
+        alt="The app showing each investment: invested, worth now, gain or loss, and a total"
+        loading="eager"
+        class="relative"
+      />
+    </div>
+  </div>
+</section>
