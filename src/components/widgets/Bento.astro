@@ -15,8 +15,8 @@ const day = (offset: number) => {
 <section id="features" class="mx-auto max-w-7xl px-4 md:px-6 pt-24 md:pt-36 scroll-mt-[72px]">
   <Headline
     tagline="What you get"
-    title="Made for keeping a spreadsheet up to date"
-    subtitle="Most people only want their Excel file refreshed. The app does that in one click."
+    title="Keep a spreadsheet up to date"
+    subtitle="Most people only want their Excel file refreshed. The app does that in one click, or by itself."
   />
 
   <div class="grid gap-4 md:gap-6 md:grid-cols-6">
@@ -66,6 +66,14 @@ const day = (offset: number) => {
     />
 
     <BentoCard
+      class="md:col-span-4"
+      title="Find any investment"
+      text="Sort by any column, show only those gaining or losing, or search by name. Choose the columns you want, from shares and price per share to dividends."
+      image={shot('table-tools')}
+      alt="The list of investments showing only those gaining, with its search box, Show and Columns buttons"
+    />
+
+    <BentoCard
       class="md:col-span-2"
       title="A backup before every change"
       text="The first time each day it changes your spreadsheet, the app saves a copy next to it. You choose how many to keep."
@@ -89,7 +97,7 @@ const day = (offset: number) => {
     </BentoCard>
 
     <BentoCard
-      class="md:col-span-4"
+      class="md:col-span-6"
       title="Your own sheets stay yours"
       text="The app writes only its two sheets, Current Holdings and Portfolio History. Everything else in your file is left as it was, and your own formulas and charts can use the app’s figures."
     >

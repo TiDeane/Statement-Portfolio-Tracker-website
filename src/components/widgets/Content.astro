@@ -1,0 +1,53 @@
+---
+/**
+ * A picture of the app beside a few points, each with an icon. Adapted from tiagodeane.com's Content widget:
+ * the same layout and item grid, in this site's section frame, with a screenshot in the page's theme.
+ */
+import Headline from '~/components/ui/Headline.astro';
+import ItemGrid from '~/components/ui/ItemGrid.astro';
+import ThemedImage from '~/components/ui/ThemedImage.astro';
+import type { Content } from '~/types';
+import type { Shot } from '~/utils/screenshots';
+
+export interface Props extends Omit<Content, 'image' | 'isDark' | 'bg' | 'isAfterContent'> {
+  image?: Shot;
+  alt?: string;
+}
+
+const { title, subtitle, tagline, items = [], columns, image, alt = '', isReversed = false, id } = Astro.props;
+const hasImage = !!(image?.dark || image?.light);
+---
+
+<section id={id} class="relative overflow-x-clip scroll-mt-[72px]">
+  <div class="mx-auto max-w-7xl px-4 md:px-6 pt-24 md:pt-36">
+    <Headline tagline={tagline} title={title} subtitle={subtitle} />
+    <div class={`md:flex ${isReversed ? 'md:flex-row-reverse' : ''} md:gap-16`}>
+      <div class="md:basis-1/2 self-center">
+        <ItemGrid
+          items={items}
+          columns={columns}
+          defaultIcon="tabler:check"
+          classes={{
+            container: 'gap-y-6 md:gap-y-8',
+            panel: 'max-w-none',
+            title: 'text-lg font-semibold leading-6 text-gray-900 dark:text-white ml-2',
+            description: 'mt-1.5 text-muted ml-2',
+            icon: 'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary p-1.5',
+          }}
+        />
+      </div>
+      {
+        hasImage && (
+          <div class="mt-10 md:mt-0 md:basis-1/2 self-center">
+            <div class="relative">
+              <div class="absolute -inset-6 rounded-[2rem] bg-primary/15 blur-3xl" aria-hidden="true" />
+              <div class="relative overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 shadow-xl">
+                <ThemedImage shot={image!} alt={alt} sizes="(min-width: 768px) 50vw, 100vw" />
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

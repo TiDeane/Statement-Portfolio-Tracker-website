@@ -4,8 +4,10 @@ import Hero from '~/components/widgets/Hero.astro';
 import TrustStrip from '~/components/widgets/TrustStrip.astro';
 import ScrollDemo from '~/components/widgets/ScrollDemo.astro';
 import Bento from '~/components/widgets/Bento.astro';
+import Content from '~/components/widgets/Content.astro';
 import Faq from '~/components/widgets/Faq.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import { shot } from '~/utils/screenshots';
 
 const metadata = {
   title: 'Statement Portfolio Tracker: your Revolut investments, at a glance',
@@ -16,6 +18,38 @@ const metadata = {
   <Hero />
   <TrustStrip />
   <ScrollDemo />
+  <Content
+    id="every-day"
+    tagline="Hands-off"
+    title="Your spreadsheet, updated every day"
+    subtitle="Two switches in Settings, each one up to you. With both on, your spreadsheet is updated every day without you opening anything."
+    items={[
+      {
+        title: '“Open when I sign in”',
+        description: 'The app starts minimized in the taskbar, out of your way, and looks up today’s prices.',
+        icon: 'tabler:power',
+      },
+      {
+        title: '“Update it by itself”',
+        description:
+          'As soon as today’s prices are in, the app writes them to your Excel file, with a new row in your history.',
+        icon: 'tabler:file-spreadsheet',
+      },
+      {
+        title: 'Asks for you only when it needs you',
+        description:
+          'Its taskbar button flashes if a new investment needs confirmation, or your Excel file is open. Otherwise, you never see it.',
+        icon: 'tabler:bell',
+      },
+      {
+        title: 'No new statement each time',
+        description: 'It keeps a copy of the last one. Bring a new one only after you buy, sell or add money.',
+        icon: 'tabler:file-text',
+      },
+    ]}
+    image={shot('settings-opening')}
+    alt="Settings, with “Update it by itself” and “Open when I sign in” turned on"
+  />
   <Bento />
   <Faq />
   <CallToAction />

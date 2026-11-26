@@ -19,14 +19,20 @@ const steps = [
     visual: 'revolut',
   },
   {
-    title: 'Drop it into the app',
-    text: 'Drag the file onto the window, or choose it. If you want your figures in Excel, pick your spreadsheet, or let the app create one. It remembers both for next time.',
-    visual: 'steps',
-    alt: 'The app’s three steps, with a statement and a spreadsheet chosen',
+    title: 'Give it to the app, once',
+    text: 'Drop the file on the window. The app keeps a copy of your statement locally, so you only bring a new one after you buy, sell or add money.',
+    visual: 'first-launch',
+    alt: 'The app’s first launch, with the statement read: its transactions and the investments still held',
   },
   {
-    title: 'Press the green button',
-    text: 'The app looks up today’s prices and shows, for each investment, what you put in, what it is worth now and your gain or loss. Your spreadsheet is updated in the same moment.',
+    title: 'Open it, and it’s up to date',
+    text: 'Each time it opens, the app looks up today’s prices by itself and shows what each investment is worth now, and your gain or loss.',
+    visual: 'home',
+    alt: 'The app’s Home: today’s values, your statement and your spreadsheet, and each investment',
+  },
+  {
+    title: 'Your spreadsheet is updated too',
+    text: 'Choose your Excel file the first time, or create a new one. After that, one click brings it up to date, with a new row in your history each day. Or let the app do it for you.',
     visual: 'sheet-holdings',
     windowTitle: 'My investments.xlsx',
     alt: 'The Current Holdings sheet the app writes in Excel: each investment, what was invested, its value now and the total',
@@ -38,7 +44,7 @@ const steps = [
   <div class="mx-auto max-w-7xl px-4 md:px-6 pt-24 md:pt-36">
     <Headline
       tagline="How it works"
-      title="Three steps. About a minute."
+      title="Set it up once. It keeps itself up to date."
       subtitle="No terminal, no settings to fill in."
     />
 

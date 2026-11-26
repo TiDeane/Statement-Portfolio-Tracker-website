@@ -39,8 +39,7 @@ const latest = await releaseAtBuild();
     </h1>
 
     <p class="motion-safe:animate-fade mx-auto mt-6 max-w-2xl text-lg md:text-xl text-muted">
-      Open the statement you export from Revolut and see what each investment is worth today. If you like, your own
-      Excel spreadsheet is kept up to date too. All on your computer.
+      See what each investment is worth today and let your Excel spreadsheet update itself. All on your computer.
     </p>
 
     <div class="motion-safe:animate-fade mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -71,8 +70,8 @@ const latest = await releaseAtBuild();
       >
       </div>
       <AppWindow
-        shot={shot('result')}
-        alt="The app showing each investment: invested, worth now, gain or loss, and a total"
+        shot={shot('home')}
+        alt="The app’s Home: what your investments are worth now, your statement and your spreadsheet, and each investment"
         loading="eager"
         class="relative"
       />
