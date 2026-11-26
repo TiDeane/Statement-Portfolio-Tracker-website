@@ -108,11 +108,13 @@ const day = (offset: number) => {
           </p>
           <p class="mt-1 text-muted">Values, formulas, formatting, colour rules, tables and charts.</p>
         </div>
-        <div class="rounded-xl bg-gray-100 dark:bg-white/5 p-4">
-          <p class="flex items-center gap-2 font-semibold text-gray-900 dark:text-white">
-            <Icon name="tabler:info-circle" class="w-4 h-4 text-amber-500" /> Not kept
+        <div class="rounded-xl border border-red-300 bg-red-50 p-4 dark:border-red-500/40 dark:bg-red-500/10">
+          <p class="flex items-center gap-2 font-semibold text-red-700 dark:text-red-400">
+            <Icon name="tabler:alert-triangle" class="w-4 h-4" /> Not kept
           </p>
-          <p class="mt-1 text-muted">Pictures, shapes and text boxes. If you use them, let the app make a new file.</p>
+          <p class="mt-1 text-red-900/80 dark:text-red-200/80">
+            Pictures, shapes and text boxes. If you use them, let the app make a new file.
+          </p>
         </div>
       </div>
     </BentoCard>
