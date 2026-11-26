@@ -2,7 +2,8 @@
 /**
  * The title at the top of a page other than the landing page, with a line under it (the default
  * slot) and, optionally, a blue glow behind it. Anything that should follow the line, such as a
- * notice, goes in the `after` slot.
+ * notice, goes in the `after` slot. With `animate`, the title and the line fade in and rise as the page opens,
+ * the line just after the title.
  */
 import { twMerge } from 'tailwind-merge';
 
@@ -10,10 +11,11 @@ export interface Props {
   title: string;
   align?: 'start' | 'center';
   glow?: boolean;
+  animate?: boolean;
   class?: string;
 }
 
-const { title, align = 'start', glow = false, class: className = '' } = Astro.props;
+const { title, align = 'start', glow = false, animate = false, class: className = '' } = Astro.props;
 const centered = align === 'center';
 ---
 
@@ -26,10 +28,20 @@ const centered = align === 'center';
       />
     )
   }
-  <h1 class="text-4xl md:text-6xl font-bold tracking-tighter text-gray-900 dark:text-white">{title}</h1>
+  <h1
+    class:list={[
+      'text-4xl md:text-6xl font-bold tracking-tighter text-gray-900 dark:text-white',
+      animate && 'motion-safe:animate-fade',
+    ]}
+  >
+    {title}
+  </h1>
   {
     Astro.slots.has('default') && (
-      <p class:list={['mt-4 text-lg text-muted', centered && 'mx-auto max-w-xl']}>
+      <p
+        class:list={['mt-4 text-lg text-muted', centered && 'mx-auto max-w-xl', animate && 'motion-safe:animate-fade']}
+        style={animate ? 'animation-delay: 80ms' : undefined}
+      >
         <slot />
       </p>
     )

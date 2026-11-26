@@ -69,7 +69,7 @@ const metadata = {
 <Layout metadata={metadata}>
   <section class="relative overflow-hidden">
     <div class="mx-auto max-w-5xl px-4 md:px-6 pt-14 md:pt-20">
-      <PageHeader title="Download" align="center" glow>
+      <PageHeader title="Download" align="center" glow animate>
         Version <span data-release-version>{latest?.version ?? 'latest'}</span>{
           latest && (
             <span set:html={`, released <span data-release-date>${formatDate(latest.publishedAt, 'en-GB')}</span>`} />
@@ -86,14 +86,15 @@ const metadata = {
 
     <div class="mx-auto max-w-5xl px-4 md:px-6 pt-10 grid gap-4 sm:grid-cols-2">
       {
-        cards.map(({ platform, icon, title, detail, badge }) => {
+        cards.map(({ platform, icon, title, detail, badge }, i) => {
           const download = latest?.downloads[platform];
           return (
             <a
               href={downloadUrl(latest, platform)}
               data-asset={platform}
               data-card={platform}
-              class="card group flex items-center gap-5 p-6 transition hover:border-primary/60"
+              class="card group flex items-center gap-5 p-6 transition hover:border-primary/60 motion-safe:animate-fade"
+              style={`animation-delay: ${(i + 2) * 80}ms`}
             >
               <Icon name={icon} class="w-10 h-10 shrink-0 text-gray-900 dark:text-white" />
               <span class="min-w-0 flex-1 text-left">
@@ -123,7 +124,10 @@ const metadata = {
         })
       }
     </div>
-    <p class="mx-auto max-w-5xl px-4 md:px-6 mt-4 text-sm text-muted">
+    <p
+      class="mx-auto max-w-5xl px-4 md:px-6 mt-4 text-sm text-muted motion-safe:animate-fade"
+      style="animation-delay: 480ms"
+    >
       Not sure which Mac you have? Open the Apple menu › <b class="text-default">About This Mac</b>. If it says
       <b class="text-default">Chip: Apple M…</b>, choose Apple Silicon; if it says <b class="text-default"
         >Processor: Intel</b
@@ -133,11 +137,16 @@ const metadata = {
 
   <section class="mx-auto max-w-3xl px-4 md:px-6 pt-20 md:pt-28 space-y-16">
     <div id="windows" class="scroll-mt-24">
-      <h2 class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+      <h2
+        class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white motion-safe:animate-fade"
+        style="animation-delay: 560ms"
+      >
         <Icon name="tabler:brand-windows" class="w-7 h-7" /> Installing on Windows
       </h2>
-      <Timeline items={windowsSteps} numbered animate={false} classes={stepClasses} />
-      <p class="mt-6 text-sm text-muted">
+      <div class="motion-safe:animate-fade" style="animation-delay: 640ms">
+        <Timeline items={windowsSteps} numbered animate={false} classes={stepClasses} />
+      </div>
+      <p class="mt-6 text-sm text-muted motion-safe:animate-fade" style="animation-delay: 720ms">
         To update, install the new version over the old one: your settings are kept. To remove the app, use
         <b class="text-default">Settings › Apps › Installed apps</b>: it also deletes the app’s settings and takes it
         out of your startup apps. Your spreadsheets are never deleted. If your computer uses Smart App Control, it may
@@ -145,7 +154,7 @@ const metadata = {
       </p>
     </div>
 
-    <div id="mac" class="scroll-mt-24">
+    <div id="mac" class="scroll-mt-24 motion-safe:animate-fade" style="animation-delay: 800ms">
       <h2 class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
         <Icon name="tabler:brand-apple" class="w-7 h-7" /> Installing on a Mac
       </h2>
@@ -159,7 +168,7 @@ const metadata = {
       <Timeline items={macSteps} numbered animate={false} classes={stepClasses} />
     </div>
 
-    <div id="linux" class="scroll-mt-24">
+    <div id="linux" class="scroll-mt-24 motion-safe:animate-fade" style="animation-delay: 880ms">
       <h2 class="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
         <Icon name="tabler:brand-ubuntu" class="w-7 h-7" /> Linux
       </h2>
@@ -169,7 +178,7 @@ const metadata = {
       </p>
     </div>
 
-    <div class="card p-6 md:p-8">
+    <div class="card p-6 md:p-8 motion-safe:animate-fade" style="animation-delay: 960ms">
       <h2 class="text-xl font-bold text-gray-900 dark:text-white">Next: get your statement</h2>
       <p class="mt-2 text-muted">
         In the Revolut app: <b class="text-default">{REVOLUT_PATH_TEXT}</b>, format <b class="text-default">{format}</b
@@ -180,7 +189,7 @@ const metadata = {
       </a>
     </div>
 
-    <p class="text-sm text-muted">
+    <p class="text-sm text-muted motion-safe:animate-fade" style="animation-delay: 1040ms">
       Older versions and the source code are on <a
         class="underline underline-offset-4 hover:text-primary"
         href={`${REPO_URL}/releases`}>GitHub</a
