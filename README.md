@@ -47,10 +47,11 @@ after a release, run it by hand (Actions › deploy › Run workflow).
 
 `src/assets/screenshots/` holds pictures of the app, made with fake prices and made-up investments, never real data:
 
-- `NAME-dark.png` / `NAME-light.png` (the page shows the one matching its theme): from the app's repository, on
-  Windows, with
-  `.venv-win\Scripts\python scripts\screenshots.py <this repo>\src\assets\screenshots`. It also writes
-  `spreadsheet.xlsx` there: move it out before committing.
+- `NAME-dark.png` / `NAME-light.png` (the page shows the one matching its theme): `first-launch`, `confirm`, `home`,
+  `settings-opening`, `table-tools` and `entered-value`, from the app's repository, on Windows, with
+  `.venv-win\Scripts\python scripts\screenshots.py <this repo>\src\assets\screenshots`. The script draws the
+  window offscreen at exactly twice its size, so nothing shows on screen and the display's scaling doesn't matter.
+  It also writes `spreadsheet.xlsx` there: move it out before committing.
 - `sheet-holdings.png`, `sheet-history.png`: pictures of that workbook's two sheets, taken by Excel with
   `powershell -STA -File scripts\sheet-pictures.ps1 -Book <full path to spreadsheet.xlsx> -Out <folder>`
   (opens the file read-only; uses the clipboard).
@@ -59,4 +60,4 @@ A missing picture shows as a labelled placeholder.
 
 ## Licence
 
-MIT (see `LICENSE.md`; the site started from the AstroWind template). The app itself is GPL-3.0-or-later.
+MIT (see `LICENSE.md`). The app itself is GPL-3.0-or-later.
