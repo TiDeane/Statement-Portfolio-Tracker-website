@@ -1,16 +1,21 @@
 ---
+import AppWindow from '~/components/ui/AppWindow.astro';
 import PageHeader from '~/components/ui/PageHeader.astro';
+import ThemedImage from '~/components/ui/ThemedImage.astro';
 import Layout from '~/layouts/PageLayout.astro';
 import { REVOLUT_PATH_TEXT, STATEMENT_CHOICES, STATEMENT_TRANSFER_TIP } from '~/data/statement';
 import { ISSUES_URL } from '~/navigation';
+import { shot } from '~/utils/screenshots';
 
 const [format, range] = STATEMENT_CHOICES.map(({ value }) => value);
 
 const sections = [
   { id: 'statement', title: 'Get your statement' },
-  { id: 'use', title: 'Use the app' },
-  { id: 'confirm', title: 'Confirming an investment' },
-  { id: 'result', title: 'Read the result' },
+  { id: 'first-time', title: 'The first time' },
+  { id: 'every-time', title: 'Every time after that' },
+  { id: 'no-new-statement', title: 'No new statement needed' },
+  { id: 'confirm', title: 'Which listing is it?' },
+  { id: 'read-home', title: 'Read Home' },
   { id: 'missing-price', title: 'When a price is missing' },
   { id: 'spreadsheet', title: 'Your Excel spreadsheet' },
   { id: 'google-sheets', title: 'Using Google Sheets' },
@@ -23,7 +28,7 @@ const sections = [
 const metadata = {
   title: 'Guide · Statement Portfolio Tracker',
   description:
-    'How to get your Revolut statement, use the app, read the result and keep your Excel spreadsheet up to date.',
+    'How to get your Revolut statement, set the app up, read Home and keep your Excel spreadsheet up to date, even by itself.',
 };
 ---
 
@@ -68,76 +73,162 @@ const metadata = {
           </p>
         </blockquote>
 
-        <h2 id="use">Use the app</h2>
+        <h2 id="first-time">The first time</h2>
+        <p>The app opens on a short welcome in two steps.</p>
         <ol>
           <li>
-            <b>Step 1: your Revolut statement.</b> Drag the file onto the window, or click <b>Choose statement file…</b>
+            <b>Your statement.</b> Drop the CSV file from Revolut on the window, or click <b>Choose statement file…</b> The
+            app reads it straight away and shows what it found: how many transactions, the date of the latest one, and how
+            many investments you still hold. If the file isn’t right (another range than All time, say), it explains what
+            is wrong. Click <b>Continue</b>.
           </li>
           <li>
-            <b>Step 2 (optional): your Excel spreadsheet.</b> Choose <b>Don’t use a spreadsheet</b> to only see the results
-            in the app, or <b>Update my Excel spreadsheet</b>, then pick your file or let the app create one. It
-            remembers your choice.
-          </li>
-          <li>
-            <b>Step 3.</b> Click the green button. The app looks up prices, which takes a few seconds, then shows your investments.
+            <b>Keep a spreadsheet up to date?</b> Choose <b>Use a spreadsheet I have</b> to pick an Excel file you already
+            have, <b>Create a new one</b> to let the app make one where you choose, or <b>Not now</b> to only see the values
+            in the app. Click <b>Show my investments</b>.
           </li>
         </ol>
 
-        <h2 id="confirm">Confirming an investment</h2>
+        <h2 id="every-time">Every time after that</h2>
+        <p>
+          The app opens on <b>Home</b> and looks up today’s prices by itself: the amounts fill in after a few seconds. Home
+          has three parts:
+        </p>
+        <div class="not-prose my-8">
+          <AppWindow
+            shot={shot('home')}
+            alt="The app’s Home: the totals, your statement and your spreadsheet, and your investments"
+          />
+        </div>
+        <ul>
+          <li>
+            <b>The totals:</b> what everything is worth now, your gain or loss since you bought, and what you invested. <b
+              >Refresh prices</b
+            > looks the prices up again.
+          </li>
+          <li>
+            <b>Your statement</b> and <b>your spreadsheet</b>, side by side: where the values come from, and where they
+            go.
+          </li>
+          <li>
+            <b>Your investments:</b> one row each, and the total. You can sort them, show only some, and choose the columns.
+          </li>
+        </ul>
+        <p>
+          To update your Excel file, press <b>Update my spreadsheet</b>. The app writes the values shown and says what
+          it wrote, in green, or in red with what to do if it couldn’t save the file (usually because it is open in
+          Excel: close it there and press <b>Try again</b>). <b>Open folder</b> shows the file in its folder. To switch to
+          another spreadsheet, press <b>Use another…</b>, or drop an Excel file on the window. If the spreadsheet has
+          been moved or deleted, Home says so.
+        </p>
+        <p>
+          Nothing is written until you press the button, unless you turn on <b>Update it by itself</b> in
+          <a href="#settings">Settings</a>: the app then writes your spreadsheet each time it has worked out today’s
+          values. <b>Help</b> (the <b>?</b> at the top) shows where to get the statement, how your data is handled and the
+          app’s version.
+        </p>
+
+        <h2 id="no-new-statement">No new statement needed</h2>
+        <p>
+          The app keeps a copy of the last statement you used, so it doesn’t need a new one each time. <b
+            >Your statement</b
+          > on Home names the file it was copied from and says the date of its latest transaction. The copy still works if
+          you move or delete that file.
+        </p>
+        <blockquote>
+          <p>
+            <b>Bought, sold or added money since then?</b> The statement from last time doesn’t know about it. Get a new
+            one from Revolut and drop it anywhere on the window, or press <b>Use a newer statement…</b> The app keeps that
+            one from then on.
+          </p>
+        </blockquote>
+
+        <h2 id="confirm">Which listing is it?</h2>
         <p>
           Many funds are traded on several stock exchanges under the same code. When the app can’t tell which one is
-          yours, it shows a short list; they are usually the same fund at almost the same price. You can:
+          yours, it asks once, listing them with their exchange, currency and symbol, and marks those that match what
+          you paid. They are usually the same fund at almost the same price. You can:
         </p>
         <ul>
-          <li><b>Pick one:</b> the one whose name and currency match what you see in Revolut.</li>
           <li>
-            <b>Always choose the first option:</b> the app uses the first listing now and whenever it can’t tell, which is
-            usually right, since the listing whose past prices best match what you paid comes first.
+            <b>Use this listing:</b> pick the one whose name and currency match what you see in Revolut. If yours isn’t there,
+            type its Yahoo Finance symbol in the box under the list.
+          </li>
+          <li>
+            <b>From now on, take the first listing without asking:</b> the listing whose past prices best match what you
+            paid always comes first, which is usually right.
           </li>
           <li><b>Skip this investment:</b> it is left without a current value.</li>
         </ul>
         <p>The app remembers your answer. To change it later, use <a href="#settings">Settings</a>.</p>
 
-        <h2 id="result">Read the result</h2>
+        <h2 id="read-home">Read Home</h2>
+        <p>
+          <b>Worth now</b> is what everything you hold would be worth at today’s prices, in your statement’s currency. Under
+          it, your gain or loss since you bought, with an arrow, a sign and a colour. <b>Invested</b> is what you paid for
+          what you still hold, fees included.
+        </p>
         <table>
           <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
           <tbody>
-            <tr><td>Investment</td><td>The fund or share, as its code and name.</td></tr>
+            <tr><td>Investment</td><td>The fund or share: its name, with its code and stock exchange under it.</td></tr>
             <tr><td>Invested</td><td>What you paid for what you still hold, fees included.</td></tr>
-            <tr><td>% of invested</td><td>How much of all the money you invested went into this one.</td></tr>
-            <tr><td>Worth now</td><td>What it would be worth at the latest price. Approximate.</td></tr>
-            <tr><td>% of worth now</td><td>Its share of all your investments, by what they are worth now.</td></tr>
-            <tr><td>Gain or loss</td><td>Worth now minus invested.</td></tr>
+            <tr><td>Worth now</td><td>What it would be worth at today’s price. Approximate.</td></tr>
+            <tr
+              ><td>Share of total</td><td>How much of all your investments this one is, by what they are worth now.</td
+              ></tr
+            >
+            <tr><td>Gain or loss</td><td>Worth now minus invested, and as a percentage.</td></tr>
           </tbody>
         </table>
         <p>
-          The last row is the total. Investments you have sold completely are not listed. To rename an investment,
-          double-click its name (or select it and press <kbd>F2</kbd>); the name is also used in your spreadsheet.
+          The last row is the total. Investments you have sold completely are not listed. <b>Columns</b> adds others: shares,
+          average cost per share, price per share, share of invested, gain from sales and dividends received.
         </p>
+        <ul>
+          <li>
+            <b>Sort:</b> click a column’s heading, the largest amounts first; click again for the other way round, and a
+            third time for the usual order.
+          </li>
+          <li>
+            <b>Show some:</b>
+            <b>Show</b> chooses between all investments, those gaining and those losing; <b>Search by name or ticker</b>
+            finds one. The total then covers only those shown, and a line says so, with <b>Show all</b>.
+          </li>
+          <li>
+            <b>Rename:</b> double-click an investment’s name (or click it and press <kbd>F2</kbd>) and type the name you
+            want; it is used in your spreadsheet too.
+          </li>
+          <li>
+            <b>Undo:</b>
+            <kbd>Ctrl</kbd>+<kbd>Z</kbd> takes back the last change to an investment, <kbd>Ctrl</kbd>+<kbd>Y</kbd> makes
+            it again.
+          </li>
+        </ul>
+        <p>The app remembers your columns, the order and what Show is set to.</p>
 
         <h2 id="missing-price">When a price is missing</h2>
         <ul>
           <li>
-            <b>“unavailable”</b>: the app could not get a current price. The row is grey and left out of the total, and
-            the app never guesses a value for it.
+            <b>“No price today”</b>: the app couldn’t get a current price. Its row is grey, and the totals cover the
+            other investments only: the app never guesses a value.
           </li>
           <li>
-            <b>A value marked *</b>: Yahoo Finance could not be reached, so the last price found on an earlier day is
-            used. Point at it to see the date.
+            <b>“price from” a date</b>: Yahoo Finance couldn’t be reached, so the last price found on an earlier day is
+            used. The totals say so, with <b>Try again</b>.
           </li>
-          <li><b>A value marked (your value)</b>: one you entered yourself.</li>
+          <li><b>“your value”</b>: one you entered yourself.</li>
         </ul>
         <p>
-          A line under the table then offers <b>Try again</b>, which looks the prices up again, and <b
-            >Enter its value…</b
-          >, where you type what the whole investment is worth now, as the Revolut app shows it. You can also type it
-          over “unavailable” in your spreadsheet. The app keeps your value until Yahoo Finance has a price again.
+          <b>Enter its value…</b> in the investment’s row (or a double-click on the row) lets you type what the whole investment
+          is worth now, as the Revolut app shows it. You can also type it over “unavailable” in your spreadsheet. The app
+          keeps your value until Yahoo Finance has a price again.
         </p>
 
         <h2 id="spreadsheet">Your Excel spreadsheet</h2>
         <p>
-          Each time you press the green button, the app writes two sheets of your file, creating them the first time.
-          Close the file in Excel first: the app can’t save a file that Excel has open.
+          Each update writes two sheets of your file, creating them the first time. Close the file in Excel first: the
+          app can’t save a file that Excel has open.
         </p>
         <ul>
           <li>
@@ -146,20 +237,22 @@ const metadata = {
             elsewhere.
           </li>
           <li>
-            <b>Portfolio History</b>: one row per day you use the app (a second run on the same day updates that row),
-            with what you put in, what it is worth, unrealized and realized gains, ROI %, net worth, net deposits and
-            gain vs deposits.
+            <b>Portfolio History</b>: one row per day you use the app (a second update on the same day changes that
+            row), with what you put in, what it is worth, unrealized and realized gains, ROI %, net worth, net deposits
+            and gain vs deposits.
           </li>
         </ul>
         <p>
-          <b>Your own sheets:</b> values, formulas, formatting, colour rules, tables and charts are kept, and can read from
-          the app’s sheets. <b>Pictures, shapes and text boxes are lost</b>, because the app saves the whole file again;
-          if your file has any, create a new spreadsheet instead.
+          <b>New or existing?</b>
+          <b>Create a new one</b> makes a file with only the app’s two sheets: the safest choice. With a file you have, your
+          own sheets stay as they are: values, formulas, formatting, colour rules, tables and charts are kept, and can read
+          from the app’s sheets. <b>Pictures, shapes and text boxes are lost</b>, because the app saves the whole file
+          again; if your file has any, create a new spreadsheet instead.
         </p>
         <p>
           <b>Backups:</b> the first time each day the app changes an existing file, it saves a copy next to it, named with
-          the date, for example <code>My investments_backup_2026-10-15.xlsx</code>. Three are kept by default; you can
-          change that in Settings. To go back, open a copy and save it under your spreadsheet’s name.
+          the date, for example <code>My investments_backup_2026-10-15.xlsx</code>. One is kept; you can keep more in
+          Settings. To go back, open a copy and save it under your spreadsheet’s name.
         </p>
 
         <h2 id="google-sheets">Using Google Sheets</h2>
@@ -168,28 +261,53 @@ const metadata = {
             Install <a href="https://www.google.com/drive/download/">Google Drive for desktop</a> and sign in. Your Drive
             appears on your computer like a folder.
           </li>
-          <li>In step 2, create the spreadsheet inside your Drive, or choose an Excel file already there.</li>
+          <li>
+            When the app asks for a spreadsheet, create it inside your Drive, or choose an Excel file already there.
+          </li>
           <li>
             Open it from drive.google.com. Google Sheets edits it as an Excel file (it shows a small .XLSX label).
           </li>
         </ol>
         <p>
-          After each update, reload the page to see the new values. Close the file in Google Sheets before pressing the
-          green button. <b>File › Save as Google Sheets</b> makes a separate copy, which the app does not update.
+          After each update, reload the page to see the new values. Close the file in Google Sheets before the app
+          updates it. <b>File › Save as Google Sheets</b> makes a separate copy, which the app does not update.
         </p>
 
         <h2 id="settings">Settings</h2>
-        <p>Settings lists the investments the app remembers. Select one to:</p>
+        <p>Press <b>Settings</b> at the top of Home. Changes are saved at once.</p>
         <ul>
-          <li><b>Rename</b> it, for the table and the spreadsheet.</li>
           <li>
-            <b>Choose the listing next time</b>: the next run shows you the list of listings for it again.
+            <b>Your investments:</b> each one’s <b>⋯</b> button offers <b>Rename</b>, <b>Choose the listing next time</b
+            >
+            and <b>Forget…</b> And the switch <b>Take the first listing without asking</b>.
           </li>
-          <li><b>Forget</b> it: the next run looks for its listing again, as on the first day.</li>
+          <li>
+            <b>Your statement:</b> the one the app keeps, with <b>Use a newer one…</b> and <b>Forget it…</b>
+          </li>
+          <li>
+            <b>Your spreadsheet:</b>
+            <b>Choose another…</b>, <b>Stop using it</b>, how many backup copies to keep, and <b>Update it by itself</b
+            >: the app writes your spreadsheet each time today’s prices are in, without the button.
+          </li>
+          <li>
+            <b>Opening the app:</b>
+            <b>Open when I sign in</b> opens the app each time you sign in to your computer, minimized in the taskbar (the
+            Dock on a Mac), where it works out today’s values. With Update it by itself on, your spreadsheet is then updated
+            every day without you opening anything. When the app needs you, its taskbar button flashes. Only the installed
+            app can do this; on a Mac, move it to Applications first.
+          </li>
+          <li><b>Appearance:</b> light, dark, or as your computer is set.</li>
         </ul>
+        <div class="not-prose my-8 overflow-hidden rounded-xl border border-gray-200 dark:border-white/10 shadow-xl">
+          <ThemedImage
+            shot={shot('settings-opening')}
+            alt="Settings, with “Update it by itself” and “Open when I sign in” turned on"
+            sizes="(min-width: 1024px) 48rem, 100vw"
+          />
+        </div>
         <p>
-          You can also set how many backup copies to keep (0 to 99), and undo changes to investments with
-          <kbd>Ctrl</kbd>+<kbd>Z</kbd>.
+          Opening the app while it is already open, minimized or not, brings up the window that is open instead of a
+          second one.
         </p>
 
         <h2 id="privacy">Privacy</h2>
@@ -200,8 +318,11 @@ const metadata = {
           are kept by the app.
         </p>
         <p>
-          The app keeps a few kilobytes of settings (your confirmed investments, where your spreadsheet is, last prices
-          found and values you entered) in your user folder. Uninstalling it on Windows deletes them.
+          The app keeps a few kilobytes in your user folder: its settings (your confirmed investments, where your
+          spreadsheet is), the last prices found, values you entered, and a copy of the last statement you used, so that
+          it needs no new one each time. That copy holds your whole trading history, like the file you downloaded from
+          Revolut; <a href="#settings">Settings</a> can forget it. Uninstalling the app on Windows deletes all of it, and
+          takes the app out of your startup apps.
         </p>
 
         <h2 id="limitations">Known limitations</h2>
@@ -212,7 +333,10 @@ const metadata = {
             Only cash top-ups, market buys, market sells and dividends are understood. Anything else (a stock split, a
             withdrawal) stops the app with a message naming the row, so it never shows numbers built on a guess.
           </li>
-          <li>Prices need an internet connection.</li>
+          <li>
+            Prices need an internet connection. Without one, the app uses the last prices it found, dated, or shows “No
+            price today”; you can then <a href="#missing-price">enter values yourself</a>.
+          </li>
           <li>The figures are simple: what you paid against what it is worth now. No tax calculations.</li>
           <li>
             English only. The app doesn’t update itself: new versions are on the <a href="/download">download page</a>.
