@@ -14,6 +14,8 @@ export interface Props {
   title?: string;
   class?: string;
   loading?: 'eager' | 'lazy';
+  /** The page's main picture: fetched first, and only the theme's copy (see ThemedImage). */
+  priority?: boolean;
   chrome?: boolean;
 }
 
@@ -23,6 +25,7 @@ const {
   title = 'Statement Portfolio Tracker',
   class: className = '',
   loading = 'lazy',
+  priority = false,
   chrome = true,
 } = Astro.props;
 ---
@@ -60,7 +63,13 @@ const {
   }
   {
     shot.dark || shot.light ? (
-      <ThemedImage shot={shot} alt={alt} loading={loading} sizes="(min-width: 1024px) 60vw, 100vw" />
+      <ThemedImage
+        shot={shot}
+        alt={alt}
+        loading={loading}
+        priority={priority}
+        sizes="(min-width: 1024px) 60vw, 100vw"
+      />
     ) : (
       <div class="aspect-[16/10] grid place-items-center bg-gray-50 dark:bg-white/[0.02] text-sm text-muted p-6 text-center">
         Screenshot: {alt}

@@ -1,5 +1,10 @@
 ---
-/** A screenshot in the page's theme: the dark picture in dark mode, the light one otherwise. */
+/**
+ * A screenshot in the page's theme: the dark picture in dark mode, the light one otherwise. With `priority` (the
+ * page's main picture, at the top), the browser fetches it first and fetches only the theme's copy: both copies are
+ * lazy, and the other theme's, hidden, is never fetched unless the theme changes. The theme is set before the page
+ * is drawn (ApplyColorMode), so the right copy is known by then.
+ */
 import { Image } from 'astro:assets';
 import type { Shot } from '~/utils/screenshots';
 
@@ -9,9 +14,12 @@ export interface Props {
   sizes: string;
   class?: string;
   loading?: 'eager' | 'lazy';
+  priority?: boolean;
 }
 
-const { shot, alt, sizes, class: className = '', loading = 'lazy' } = Astro.props;
+const { shot, alt, sizes, class: className = '', loading: asked = 'lazy', priority = false } = Astro.props;
+const loading = priority ? 'lazy' : asked;
+const fetchpriority = priority ? 'high' : 'auto';
 const same = shot.dark === shot.light;
 const widths = (width: number) => [640, 960, 1440, Math.min(width, 2000)].filter((w) => w <= width);
 ---
@@ -24,6 +32,7 @@ const widths = (width: number) => [640, 960, 1440, Math.min(width, 2000)].filter
       widths={widths(shot.light.width)}
       sizes={sizes}
       loading={loading}
+      fetchpriority={fetchpriority}
       class:list={['block w-full h-auto', { 'dark:hidden': !same }, className]}
     />
   )
@@ -36,6 +45,7 @@ const widths = (width: number) => [640, 960, 1440, Math.min(width, 2000)].filter
       widths={widths(shot.dark.width)}
       sizes={sizes}
       loading={loading}
+      fetchpriority={fetchpriority}
       class:list={['hidden dark:block w-full h-auto', className]}
     />
   )
