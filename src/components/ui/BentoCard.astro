@@ -16,7 +16,12 @@ const hasImage = !!(image?.dark || image?.light);
 const hasVisual = hasImage || Astro.slots.has('default');
 ---
 
-<article class={twMerge('card flex flex-col', className)}>
+<article
+  class={twMerge(
+    'card flex flex-col intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade',
+    className
+  )}
+>
   <div class="p-6 md:p-8">
     <h3 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">{title}</h3>
     <p class="mt-2 text-muted leading-relaxed">{text}</p>
