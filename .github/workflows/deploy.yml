@@ -5,20 +5,45 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # Rebuild once a month, so the download links baked into the pages catch up with new app releases
-  # even without a push here. Visitors rarely need it: the pages ask GitHub for the newest release
-  # when they load. To pick up a release at once, run this workflow by hand.
+  # Once a week, rebuild if the app has a newer release than the one the live site was built with. Visitors rarely need it: the pages ask
+  # GitHub for the newest release when they load. To pick up a release at once, run this workflow by hand.
   schedule:
-    - cron: '17 6 1 * *' # on the 1st of each month at 06:17 UTC
+    - cron: '17 6 * * 1' # Mondays at 06:17 UTC
 
 permissions:
   contents: read
 
 jobs:
+  # Whether to build: always for a push or a manual run; on the weekly schedule, only if GitHub's newest app
+  # release is not the one in the live site's /release.txt (or either can't be read).
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.compare.outputs.build }}
+    steps:
+      - id: compare
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "build=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          newest=$(curl -fsSL -H "Authorization: Bearer $GH_TOKEN" \
+            https://api.github.com/repos/TiDeane/Statement-Portfolio-Tracker/releases/latest | jq -r '.tag_name // empty') || newest=""
+          live=$(curl -fsSL https://statements.tiagodeane.com/release.txt | tr -d '[:space:]') || live=""
+          echo "Newest release: ${newest:-unknown}. Live site built with: ${live:-unknown}."
+          if [ -n "$newest" ] && [ "${newest#v}" = "$live" ]; then
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+
   # Check, test and build, then keep the build for the deploy job. A manual run started on another
   # branch does nothing.
   build:
-    if: github.ref == 'refs/heads/main'
+    needs: check
+    if: github.ref == 'refs/heads/main' && needs.check.outputs.build == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
